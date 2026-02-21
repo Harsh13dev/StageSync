@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from src.db.database import engine, get_db
 from src.db import db_models
@@ -7,8 +8,15 @@ from src import schemas
 
 app = FastAPI(title="StageSync", description="To create a single digital 'hub' where talent meets opportunity.")
 
-db_models.Base.metadata.create_all(engine)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
+db_models.Base.metadata.create_all(engine)
 
 
 @app.post("/register", tags=["common"])
